@@ -1,4 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
+from django.core.exceptions import ValidationError
+from django.utils.encoding import DjangoUnicodeDecodeError
+from django.utils.http import urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 
 
@@ -34,3 +37,12 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_('Superuser must have is_superuser=True.'))
 
         return self.create_user(email, password, **extra_fields)
+
+    def get_user_with_uidb64(self, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = self.get_queryset().get(pk=uid)
+        except (TypeError, ValueError, OverflowError, self.model.DoesNotExist,
+                ValidationError, DjangoUnicodeDecodeError):
+            user = None
+        return user

@@ -18,11 +18,22 @@ import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
-env.read_env(str(BASE_DIR / '.env/.env'))
+env.read_env(str(BASE_DIR / '.env/sample.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = os.getenv('DEBUG') == 'True'
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '').split(",")
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', )
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+ENV_NAME = os.getenv('ENV_NAME')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(",")
+
 FRONT_END_IP = os.getenv('FRONT_END_IP')
 
 DJANGO_APPS = [
@@ -94,12 +105,13 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 CORS_ALLOW_ALL_ORIGINS = os.getenv('CORS_ALLOW_ALL_ORIGINS', 'False') == 'True'
 if not CORS_ALLOW_ALL_ORIGINS:
     CORS_ALLOWED_ORIGINS = [f"http://{FRONT_END_IP}"]
+FRONTEND_URL = f"{os.getenv('PROTOCOL')}://{os.getenv('FRONT_END_IP')}"
 
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],  # Ensure this path is correct
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
