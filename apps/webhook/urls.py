@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import TradingViewWebhook
+from .views import TradingViewWebhook, webhookView
 
 urlpatterns = [
-    path('webhook/', TradingViewWebhook.as_view(), name='tradingview_webhook'),
+    path('webhook/', webhookView, name='tradingview_webhook'),
 ]
